@@ -1,0 +1,11 @@
+exports.ROLES = {
+	SUPER_ADMIN: 'SUPER_ADMIN',
+	ADMIN: 'ADMIN',
+	USER: 'USER',
+};
+
+exports.ROLE_HIERARCHY = {
+	SUPER_ADMIN: 3,
+	ADMIN: 2,
+	USER: 1,
+};
