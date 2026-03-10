@@ -58,7 +58,7 @@ It follows real-world backend architecture principles:
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Layer       | Technology |
 |------------|------------|
