@@ -8,6 +8,21 @@ const User = sequelize.define("User",
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
+        name: {
+            type: DataTypes.STRING,
+            unique: false,
+            allowNull: false
+        },
+        bio: {
+            type: DataTypes.STRING,
+            unique: false, 
+            allowNull: true,
+        },
+        contact: {
+            type: DataTypes.STRING,
+            unique: true,
+            allowNull: false,
+        },
         email: {
             type: DataTypes.STRING,
             unique: true,
@@ -18,7 +33,7 @@ const User = sequelize.define("User",
             allowNull: false,
         },
         role: {
-            type: DataTypes.ENUM('SUPER_ADMIN', 'ADMIN', 'USER'),
+            type: DataTypes.ENUM('SUPER_ADMIN', 'ADMIN', 'USER', 'FACULTY'),
             defaultValue: 'USER',
             allowNull: false,
         },
@@ -27,7 +42,7 @@ const User = sequelize.define("User",
             allowNull: true,
         },
         tokenVersion: {
-            type: DataTypes.STRING,
+            type: DataTypes.INTEGER,
             defaultValue: 0,
             allowNull: false,
         },
@@ -35,6 +50,7 @@ const User = sequelize.define("User",
     {
         tableName: "users",
         timestamps: true,
+        paranoid: true,
     }
 );
 

@@ -1,17 +1,26 @@
-const { z } = require('zod');
+const { z } = require("zod");
 
 exports.authSchema = z.object({
-    email: z
-        .string()
-        .email('Invalid email format')
-        .max(100),
-    
-    password: z
-        .string()
-        .min(8, 'Password must be atleast 8 characters long')
-        .max(72, 'Password must be atmost 72 characters long'),
 
-    role: z
-		.enum(['SUPER_ADMIN', 'ADMIN', 'USER'])
-		.optional(),
-})
+	name: z
+		.string()
+		.min(1,"Invalid Name")
+		.max(50),
+
+	email: z
+		.string()
+		.email("Invalid email format"),
+
+	password: z
+		.string()
+		.min(8,"Password must be atleast 8 characters long")
+		.max(50),
+
+	contact: z
+		.string()
+		.regex(/^[6-9]\d{9}$/,"Invalid Indian mobile number"),
+
+	role: z
+		.enum(["SUPER_ADMIN", "ADMIN", "FACULTY", "USER"])
+		.optional()
+});

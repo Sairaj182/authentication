@@ -1,4 +1,5 @@
 const sequelize = require("./db");
+const models = require("../models");
 
 const syncDb = async()=>{
 	try{

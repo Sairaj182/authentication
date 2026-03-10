@@ -13,6 +13,8 @@ module.exports = {
     ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
     SUPER_ADMIN_EMAIL: process.env.SUPER_ADMIN_EMAIL,
     SUPER_ADMIN_PASSWORD: process.env.SUPER_ADMIN_PASSWORD,
+    SUPER_ADMIN_NAME: process.env.SUPER_ADMIN_NAME,
+    SUPER_ADMIN_CONTACT: process.env.SUPER_ADMIN_CONTACT,
     NODE_ENV: process.env.NODE_ENV || 'development',
     COOKIE_OPTIONS: {
         httpOnly: true,

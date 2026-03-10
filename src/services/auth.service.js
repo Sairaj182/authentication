@@ -44,7 +44,7 @@ class AuthService {
     }
 
     async register(newUser, creator) {
-        const {email,password,role} = newUser;
+        const {name, bio, contact,email,password,role} = newUser;
         const existing = await userRepo.findByEmail(email);
         const newRole = role || "USER";
         if(existing) throw new AppError('User already exists', 409);
@@ -57,7 +57,7 @@ class AuthService {
             }
         }
         const hashedPass = await bcrypt.hash(password,10);
-        const user = await userRepo.create({email, password:hashedPass, role: newRole});
+        const user = await userRepo.create({name, bio, contact, email, password:hashedPass, role: newRole});
         const accessToken = generateAccessToken({
             id: user.id,
             role: user.role,
@@ -82,6 +82,14 @@ class AuthService {
         user.refreshToken = null;
         user.tokenVersion += 1;
         await user.save();
+    }
+
+    async getProfile(userId){
+        return await userRepo.getProfile(userId);
+    }
+
+    async updateProfile(userId, data){
+        return await userRepo.updateProfile(userId, data);
     }
 }
 

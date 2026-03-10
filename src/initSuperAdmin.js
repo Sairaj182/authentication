@@ -14,6 +14,8 @@ const initSuperAdmin = async()=>{
 		const hashedpass = await bcrypt.hash(env.SUPER_ADMIN_PASSWORD, 10);
 
 		await userRepo.create({
+			name: env.SUPER_ADMIN_NAME,
+			contact: env.SUPER_ADMIN_CONTACT,
 			email: env.SUPER_ADMIN_EMAIL,
 			password: hashedpass,
 			role: 'SUPER_ADMIN',

@@ -16,6 +16,18 @@ class UserRepository {
     async findById(id) {
         return await User.findByPk(id);
     }
+
+    async updateProfile(userId, data){
+        return await User.update(data, {
+            where: {id: userId},
+        })
+    }
+
+    async getProfile(userId){
+        return await User.findByPk(userId, {
+            attributes: ["id", "name", "email", "bio", "contact", "role"],
+        })
+    }
 }
 
 module.exports = new UserRepository();
