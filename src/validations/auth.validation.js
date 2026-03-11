@@ -1,5 +1,18 @@
 const { z } = require("zod");
 
+exports.loginSchema = z.object({
+
+	email: z
+		.string()
+		.email("Invalid email format"),
+
+	password: z
+		.string()
+		.min(8,"Password must be atleast 8 characters long")
+		.max(50),
+
+});
+
 exports.authSchema = z.object({
 
 	name: z

@@ -1,15 +1,15 @@
 const {validate} = require('../middleware/validate.middleware');
-const {authSchema} = require('../validations/auth.validation');
+const {authSchema, loginSchema} = require('../validations/auth.validation');
 const authService = require('../services/auth.service');
 const env = require('../config/env');
 const {NextResponse} = require('next/server');
 const {protect} = require('../middleware/auth.middleware');
 const initDb = require('../initDb');
 
-exports.login = async (request) => {
+exports.login = async (request)=>{
     try {
 		const body = await request.json();
-		const validated = authSchema.parse(body);
+		const validated = loginSchema.parse(body);
 		const result = await authService.login(validated);
 		const response = NextResponse.json({success: true,message: 'Login successful',accessToken: result.accessToken,},{status: 200});
 		response.cookies.set('refreshToken', result.refreshToken, env.COOKIE_OPTIONS);
