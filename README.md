@@ -1,4 +1,4 @@
-# Next.js Authentication & Role-Based User Management API
+# Next.js Authentication & Role-Based User Management
 
 A production-style authentication and user management backend built using **Next.js App Router**, **Sequelize**, **JWT**, and **MySQL**.
 
