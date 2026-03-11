@@ -4,6 +4,6 @@ exports.GET = async (request)=>{
 	return getProfile(request);
 };
 
-exports.PUT = async (request)=>{
+exports.PATCH = async (request)=>{
 	return updateProfile(request);
 };

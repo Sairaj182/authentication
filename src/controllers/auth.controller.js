@@ -5,6 +5,7 @@ const env = require('../config/env');
 const {NextResponse} = require('next/server');
 const {protect} = require('../middleware/auth.middleware');
 const initDb = require('../initDb');
+const AppError = require('../errors/AppError');
 
 exports.login = async (request)=>{
     try {
