@@ -196,23 +196,6 @@ UPSTASH_REDIS_REST_TOKEN=
 
 ### Authentication
 
-#### Register
-
-```
-POST /api/auth/register
-```
-
-Request body:
-
-```json
-{
-  "email": "user@email.com",
-  "password": "password123",
-  "contact": "9876543210",
-  "name": "User"
-}
-```
-
 #### Login
 
 ```
@@ -230,6 +213,27 @@ Request body:
 
 Returns: `accessToken` and `refreshToken` cookie.
 
+<img width="1352" height="683" alt="Screenshot 2026-03-11 170456" src="https://github.com/user-attachments/assets/cb83a663-f0c5-4127-8cd1-5481a6e9b23e" />
+
+
+#### Register
+
+```
+POST /api/auth/register
+```
+
+Request body:
+
+```json
+{
+  "email": "user@email.com",
+  "password": "password123",
+  "contact": "9876543210",
+  "name": "User"
+}
+```
+<img width="1460" height="748" alt="Screenshot 2026-03-11 170737" src="https://github.com/user-attachments/assets/7ec73a72-4df7-4694-a61f-6ee87d3e9dae" />
+
 #### Refresh Token
 
 ```
@@ -237,6 +241,7 @@ POST /api/auth/refresh
 
 (Along with refresh token in cookie)
 ```
+<img width="1822" height="858" alt="Screenshot 2026-03-11 175510" src="https://github.com/user-attachments/assets/7b2d8e56-92c9-436b-8b5b-fa88766702f8" />
 
 #### Logout
 
@@ -245,6 +250,7 @@ POST /api/auth/logout
 ```
 
 Invalidates the refresh token.
+<img width="1392" height="700" alt="Screenshot 2026-03-11 175551" src="https://github.com/user-attachments/assets/559e5158-27b8-4c4b-a628-d71d88fae4b6" />
 
 ---
 
@@ -257,6 +263,8 @@ GET /api/users
 ```
 
 Requires authorization.
+
+<img width="1432" height="776" alt="Screenshot 2026-03-11 171505" src="https://github.com/user-attachments/assets/e801f746-efe9-4def-b74f-fcfe6965fd32" />
 
 #### Update Profile
 
@@ -271,6 +279,8 @@ Request body:
   "bio": "This is my updated bio"
 }
 ```
+<img width="1442" height="789" alt="Screenshot 2026-03-11 171444" src="https://github.com/user-attachments/assets/e77b21f4-d932-4069-99d8-dc3b5e106c9c" />
+
 
 ---
 
@@ -284,11 +294,14 @@ GET /api/admin/users
 
 Required role: `ADMIN` or `SUPER_ADMIN`
 
+<img width="1456" height="781" alt="Screenshot 2026-03-11 171014" src="https://github.com/user-attachments/assets/21be32dc-b5a5-4d42-8f71-50375c724155" />
+
 #### Get User by ID
 
 ```
 GET /api/admin/users/:id
 ```
+<img width="1440" height="774" alt="image" src="https://github.com/user-attachments/assets/a132f2bc-be0b-48af-a479-898a44d1be28" />
 
 #### Update User
 
@@ -303,12 +316,14 @@ Request body:
   "role": "FACULTY"
 }
 ```
+<img width="1465" height="786" alt="Screenshot 2026-03-11 171159" src="https://github.com/user-attachments/assets/3d21008b-22ee-46b0-9c07-53617d2a1e5c" />
 
 #### Delete User
 
 ```
 DELETE /api/admin/users/:id
 ```
+<img width="1454" height="548" alt="Screenshot 2026-03-11 171241" src="https://github.com/user-attachments/assets/27faa3aa-6d0e-4a8f-a064-3a42300ff5f9" />
 
 ---
 
