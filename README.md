@@ -1,238 +1,361 @@
-# Next.js Authentication System
+# Next.js Authentication & Role-Based User Management API
 
-A production-grade authentication backend built with **Next.js App Router**, **Sequelize**, **JWT**, and **MySQL** — featuring refresh tokens, token versioning, role hierarchy, and secure super admin bootstrapping.
+A production-style authentication and user management backend built using **Next.js App Router**, **Sequelize**, **JWT**, and **MySQL**.
 
----
+This system provides secure authentication with **refresh tokens**, **role-based access control**, and **hierarchical admin management**.
 
-## Overview
-
-- JWT auth
-- refresh tokens
-- RBAC hierarchy
-- faculty role
-- profile CRUD
-- admin user management
-- soft delete
-- audit logs
-- Redis rate limiting
-- super admin bootstrap
-
-This project is a modular, secure, and scalable authentication system built using **Next.js (App Router)** as a backend API layer.
-
-It follows real-world backend architecture principles:
-
-- Layered structure (**Controller → Service → Repository**)
-- JWT Access + Refresh Token flow
-- Role-Based Access Control (RBAC)
-- Hierarchical role enforcement
-- Secure refresh token hashing
-- Token version invalidation
-- Automatic SUPER_ADMIN initialization
+The backend is fully deployed on Railway using Dockerized MySQL and tested using API clients.
 
 ---
 
-## Key Features
+## Live Deployment
+
+Backend API deployed on Railway:
+
+```
+https://authentication-production-a3da.up.railway.app
+```
+
+---
+
+## Architecture
+
+The backend follows a layered architecture used in production Node.js systems:
+
+```
+Route → Controller → Service → Repository → Database
+```
+
+Directory structure:
+
+```
+src
+│
+├── app/api                 → API routes (Next.js App Router)
+│   ├── auth                → authentication endpoints
+│   ├── users               → profile management
+│   └── admin/users         → admin user management
+│
+├── controllers             → request handling logic
+├── services                → business logic
+├── repositories            → database interaction
+├── models                  → Sequelize models
+├── middleware              → authentication & authorization
+├── validations             → Zod validation schemas
+├── utils                   → JWT + helpers
+├── constants               → roles & messages
+├── config                  → DB config
+└── init scripts            → DB initialization + superadmin bootstrap
+```
+
+---
+
+## Features
 
 ### Authentication
 
-- JWT-based access tokens
-- Refresh token stored as HTTP-only cookie
-- Hashed refresh token storage in DB
-- Token versioning for session invalidation
-- Logout invalidates previous access tokens
-
----
+- User registration
+- User login
+- Refresh token system
+- Logout
+- JWT access tokens
+- Hashed refresh tokens
+- Token version invalidation
+- User Profiles Management
+- Redis Rate Limiting
 
 ### Role-Based Access Control (RBAC)
 
-- `SUPER_ADMIN`
-- `ADMIN`
-- `USER`
+Supported roles: (Mutable)
 
-**Role hierarchy enforcement:**
+```
+SUPER_ADMIN
+ADMIN
+FACULTY
+USER
+```
 
-- SUPER_ADMIN can create any role
-- ADMIN cannot create SUPER_ADMIN
-- Public users cannot self-assign elevated roles
-- Strict role enforcement (no silent downgrading)
+Hierarchy:
+
+```
+SUPER_ADMIN > ADMIN > FACULTY > USER
+```
+
+Rules:
+
+- `SUPER_ADMIN` can create any user
+- `ADMIN` cannot create `SUPER_ADMIN`
+- Public registration can only create `USER`
+- Admin routes are protected by role authorization middleware
+
+### Profile Management
+
+Users can manage their own profile. Supported fields:
+
+```
+name
+bio
+contact
+```
+
+The API uses `PATCH` instead of `PUT` for partial updates.
+
+### Admin User Management
+
+Admins can:
+
+- List all users
+- Get a user by ID
+- Update user roles
+- Delete users
+
+### Validation
+
+Implemented using **Zod**:
+
+- Email validation
+- Password length validation
+- Indian mobile number validation (`^[6-9]\d{9}$`)
+
+### Security Features
+
+- `bcrypt` password hashing
+- Hashed refresh tokens
+- HTTP-only cookies
+- Token version invalidation
+- Protected routes middleware
+- Role authorization middleware
 
 ---
 
-### Architecture
+## Database
 
-- Modular folder structure
-- Clean separation of concerns
-- Zod validation
-- Custom error handling
-- Sequelize ORM with MySQL
-- Super admin auto-bootstrap on first run
+- **Database:** MySQL
+- **ORM:** Sequelize
+
+User model fields:
+
+```
+id
+name
+bio
+contact
+email
+password
+role
+refreshToken
+tokenVersion
+createdAt
+updatedAt
+deletedAt
+```
+
+---
+
+## Automatic Initialization
+
+On first startup, the following run automatically:
+
+```
+initDb()
+initSuperAdmin()
+```
+
+This creates:
+
+- Database tables
+- A `SUPER_ADMIN` user from environment variables
+
+---
+
+## Environment Variables
+
+```env
+DB_HOST=
+DB_USER=
+DB_PASS=
+DB_NAME=
+
+JWT_ACCESS_SECRET=
+JWT_REFRESH_SECRET=
+
+SUPER_ADMIN_EMAIL=
+SUPER_ADMIN_PASSWORD=
+SUPER_ADMIN_NAME=
+SUPER_ADMIN_CONTACT=
+
+ALLOWED_ORIGINS=
+
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
+```
+
+---
+
+## API Endpoints
+
+### Authentication
+
+#### Register
+
+```
+POST /api/auth/register
+```
+
+Request body:
+
+```json
+{
+  "email": "user@email.com",
+  "password": "password123",
+  "contact": "9876543210",
+  "name": "User"
+}
+```
+
+#### Login
+
+```
+POST /api/auth/login
+```
+
+Request body:
+
+```json
+{
+  "email": "user@email.com",
+  "password": "password123"
+}
+```
+
+Returns: `accessToken` and `refreshToken` cookie.
+
+#### Refresh Token
+
+```
+POST /api/auth/refresh
+
+(Along with refresh token in cookie)
+```
+
+#### Logout
+
+```
+POST /api/auth/logout
+```
+
+Invalidates the refresh token.
+
+---
+
+### Profile Routes
+
+#### Get Profile
+
+```
+GET /api/users
+```
+
+Requires authorization.
+
+#### Update Profile
+
+```
+PATCH /api/users
+```
+
+Request body:
+
+```json
+{
+  "bio": "This is my updated bio"
+}
+```
+
+---
+
+### Admin Routes
+
+#### Get All Users
+
+```
+GET /api/admin/users
+```
+
+Required role: `ADMIN` or `SUPER_ADMIN`
+
+#### Get User by ID
+
+```
+GET /api/admin/users/:id
+```
+
+#### Update User
+
+```
+PATCH /api/admin/users/:id
+```
+
+Request body:
+
+```json
+{
+  "role": "FACULTY"
+}
+```
+
+#### Delete User
+
+```
+DELETE /api/admin/users/:id
+```
+
+---
+
+## Deployment
+
+Backend deployed on **Railway**.
+
+Components:
+
+- Next.js API server
+- MySQL Docker container
+
+Deployment flow:
+
+```
+GitHub → Railway build → Docker container → live API
+```
 
 ---
 
 ## Tech Stack
 
-| Layer       | Technology |
-|------------|------------|
-| Framework  | Next.js 16 (App Router) |
-| Runtime    | Node.js |
-| ORM        | Sequelize |
-| Database   | MySQL |
-| Auth       | JWT |
-| Validation | Zod |
-| Hashing    | bcryptjs |
-
-### Core Dependencies
-
-```
-bcryptjs
-dotenv
-jsonwebtoken
-mysql2
-sequelize
-zod
-uuid
-```
-
----
-
-## Project Structure
-
-```
-src
-├── app/api                → API routes (App Router)
-├── controllers            → Request handling logic
-├── services               → Business logic
-├── repositories           → DB interaction layer
-├── middleware             → Auth & RBAC middleware
-├── models                 → Sequelize models
-├── validations            → Zod schemas
-├── config                 → DB & environment config
-├── constants              → Roles & messages
-├── utils                  → JWT utilities
-├── initDb.js              → DB bootstrap
-└── initSuperAdmin.js      → Super admin initialization
-```
-
----
-
-## Authentication Flow
-
-### Login
-
-1. Validate credentials  
-2. Generate access + refresh token  
-3. Hash and store refresh token in DB  
-4. Send access token in response  
-5. Send refresh token as HTTP-only cookie  
-
----
-
-### Refresh
-
-1. Read refresh token from cookie  
-2. Verify JWT signature  
-3. Compare hashed refresh token in DB  
-4. Generate new access token  
-
----
-
-### Logout
-
-1. Clear refresh token  
-2. Increment `tokenVersion`  
-3. Invalidate all previous access tokens  
-
----
-
-## Super Admin Bootstrap
-
-On first server start:
-
-- Checks if `SUPER_ADMIN_EMAIL` exists  
-- If not, creates super admin using environment credentials  
-- No manual DB setup required  
-
----
-
-## Role Hierarchy
-
-```
-SUPER_ADMIN → level 3
-ADMIN       → level 2
-USER        → level 1
-```
-
-A user cannot create another user with a higher role than themselves.  
-Unauthorized attempts return **403 Forbidden**.
-
----
-
-## Running the Project
-
-### Install dependencies
-
-```
-npm install
-```
-
----
-
-### Configure `.env.local`
-
-```
-DB_NAME=your_db
-DB_USER=root
-DB_PASS=your_password
-DB_HOST=localhost
-
-JWT_ACCESS_SECRET=your_secret
-JWT_REFRESH_SECRET=your_refresh_secret
-
-SUPER_ADMIN_EMAIL=superadmin@example.com
-SUPER_ADMIN_PASSWORD=SuperSecurePassword
-```
-
----
-
-### Start development server
-
-```
-npm run dev
-```
-
-Server runs at:
-
-```
-http://localhost:3000
-```
-
----
-
-## Available API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST   | `/api/auth/register` | Register user |
-| POST   | `/api/auth/login`    | Login |
-| POST   | `/api/auth/refresh`  | Refresh access token |
-| POST   | `/api/auth/logout`   | Logout |
-| GET    | `/api/users`         | Protected route |
+- Next.js (App Router)
+- Node.js
+- Sequelize ORM
+- MySQL
+- JWT Authentication
+- bcrypt
+- Zod
+- Railway
+- Docker
 
 ---
 
 ## Future Improvements
 
+- Redis Caching
 - Refresh token rotation
-- Device-based session tracking
-- Redis token blacklist
-- Password reset flow
+- Redis session store
 - Email verification
-- Migration-based DB management
-- Docker deployment
+- Password reset
+- API pagination
 
 ---
 
 ## Author
 
-**Sairaj**  
-Backend Engineering & System Design
+Sairaj Raithatha
+
+Built as a production-style authentication backend demonstrating secure authentication, RBAC, modular backend architecture, and cloud deployment.
