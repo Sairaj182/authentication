@@ -6,6 +6,17 @@ A production-grade authentication backend built with **Next.js App Router**, **S
 
 ## Overview
 
+- JWT auth
+- refresh tokens
+- RBAC hierarchy
+- faculty role
+- profile CRUD
+- admin user management
+- soft delete
+- audit logs
+- Redis rate limiting
+- super admin bootstrap
+
 This project is a modular, secure, and scalable authentication system built using **Next.js (App Router)** as a backend API layer.
 
 It follows real-world backend architecture principles:
