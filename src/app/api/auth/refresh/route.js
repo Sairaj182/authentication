@@ -1,8 +1,36 @@
 const {refreshToken} = require('@/controllers/auth.controller');
 const {NextResponse} = require('next/server');
-const { authLimiter } = require("@/middleware/rateLimiter.middleware");
+const ratelimit = require('@/utils/rateLimiter');
+
 
 exports.POST = async (req) => {
-    await authLimiter(request);
-    return refreshToken(req);
-}
+	try{
+		const ip =
+			request.headers.get("x-forwarded-for") ||
+			request.headers.get("x-real-ip") ||
+			"anonymous";
+		const {success} = await ratelimit.limit(ip);
+
+		if(!success){
+			return Response.json(
+				{
+					success: false,
+					message: "Too many requests"
+				},
+				{status: 429}
+			);
+		}
+
+	    return refreshToken(req);
+
+	}catch(error){
+
+		return Response.json(
+			{
+				success: false,
+				message: error.message
+			},
+			{status: 500}
+		);
+	}
+};
