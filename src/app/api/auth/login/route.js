@@ -5,8 +5,8 @@ const ratelimit = require('@/utils/rateLimiter');
 exports.POST = async (req) => {
 	try{
 		const ip =
-			request.headers.get("x-forwarded-for") ||
-			request.headers.get("x-real-ip") ||
+			req.headers.get("x-forwarded-for") ||
+			req.headers.get("x-real-ip") ||
 			"anonymous";
 		const {success} = await ratelimit.limit(ip);
 
