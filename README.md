@@ -18,6 +18,20 @@ https://authentication-production-a3da.up.railway.app
 
 ---
 
+## Run with Docker
+
+Build and start the stack
+
+docker compose up --build
+
+This will start:
+
+- Next.js API container
+- MySQL database container
+
+API runs on:
+http://localhost:3000
+
 ## Architecture
 
 The backend follows a layered architecture used in production Node.js systems:
@@ -46,6 +60,8 @@ src
 ├── constants               → roles & messages
 ├── config                  → DB config
 └── init scripts            → DB initialization + superadmin bootstrap
+Dockerfile
+docker-compose.yml
 ```
 
 ---
@@ -117,14 +133,21 @@ Implemented using **Zod**:
 - Password length validation
 - Indian mobile number validation (`^[6-9]\d{9}$`)
 
-### Security Features
+## Security Architecture
 
-- `bcrypt` password hashing
-- Hashed refresh tokens
-- HTTP-only cookies
-- Token version invalidation
-- Protected routes middleware
-- Role authorization middleware
+### Attack Protection Matrix
+
+| Attack | Protection |
+|--------|-----------|
+| Brute Force | Redis rate limiting on login/register/refresh routes |
+| Credential Stuffing | Rate limiting + bcrypt hashing |
+| Password DB Leak | bcrypt |
+| Token Replay | Refresh tokens stored hashed + token versioning |
+| Session Hijacking | Short-lived JWT access tokens (15 min) |
+| Privilege Escalation | Role-Based Access Control (RBAC) |
+| Unauthorized API Access | JWT middleware on all protected routes |
+| Malformed Input | Zod schema validation on all request bodies |
+| Enumeration | Generic error messages (no email/user hints) |
 
 ---
 
