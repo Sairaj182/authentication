@@ -30,7 +30,9 @@ This will start:
 - MySQL database container
 
 API runs on:
+```
 http://localhost:3000
+```
 
 ## Architecture
 
@@ -347,6 +349,25 @@ Request body:
 DELETE /api/admin/users/:id
 ```
 <img width="1454" height="548" alt="Screenshot 2026-03-11 171241" src="https://github.com/user-attachments/assets/27faa3aa-6d0e-4a8f-a064-3a42300ff5f9" />
+
+### Redis Rate Limiting
+
+We send many requests with given specifications:
+
+```
+POST /api/auth/login
+```
+
+Request body:
+
+```json
+{
+  "email": "user@email.com",
+  "password": "password123"
+}
+```
+
+<img width="1251" height="808" alt="image" src="https://github.com/user-attachments/assets/cdabfa6d-e84c-4042-a45c-ddfb737bcb5c" />
 
 ---
 
